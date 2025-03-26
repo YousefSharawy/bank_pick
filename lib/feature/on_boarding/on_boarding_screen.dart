@@ -46,8 +46,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   pageController: pageController,
                   imagePadding: 145,
                   textPadding: 270,
-                  title: """Fastest Payment in
-         the world""",
+                  title:"""Fastest Payment in
+        the world""",
                   subTitle: """Integrate multiple payment methods
          to help you up the process quickly""",
                   image: AssetsManager.onBoarding1,
@@ -57,20 +57,20 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   pageController: pageController,
                   imagePadding: 127,
                   textPadding: 242,
-                  title: """     The most Secure 
-      Platform for Customer""",
+                  title:"""     The most Secure 
+Platform for Customer""",
                   subTitle: """  Built-in Fingerprint, face recognition
-      and more, keeping you completely safe""",
+and more, keeping you completely safe""",
                   image: AssetsManager.onBoarding2,
                 ),
                 OnBoardingPages(
                   pageController: pageController,
                   imagePadding: 120,
                   textPadding: 237,
-                  title: """Paying for Everything is 
-        Easy and Convenient""",
-                  subTitle: """    Built-in Fingerprint,face recognition 
-      and more, keeping you completely safe""",
+                  title: """    Paying for Everything is 
+      Easy and Convenient""",
+                  subTitle: """        Built-in Fingerprint,face recognition 
+    and more, keeping you completely safe""",
                   image: AssetsManager.onBoarding3,
                 ),
               ],
