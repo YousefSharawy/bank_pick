@@ -1,5 +1,7 @@
 import 'package:bank_pick/core/routes/routes.dart';
 import 'package:bank_pick/feature/auth/login_screen.dart';
+import 'package:bank_pick/feature/auth/register_screen.dart';
+import 'package:bank_pick/feature/home/home_screen.dart';
 import 'package:bank_pick/feature/on_boarding/on_boarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +14,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_)=> OnBoardingScreen());
       case Routes.login:
         return MaterialPageRoute(builder: (_)=>LoginScreen());
+      case Routes.register:
+        return MaterialPageRoute(builder: (_)=>RegisterScreen());
+      case Routes.home:
+        return MaterialPageRoute(builder: (_)=>HomeScreen());
       default:
         return _unDefinedRoute();
     }

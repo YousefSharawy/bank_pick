@@ -21,7 +21,7 @@ notifyListeners();
     );
   }
   void nextL(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed(Routes.login);
+    Navigator.of(context).pushNamed(Routes.login);
     stayInLogin();
 
   }

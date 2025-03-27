@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import '../../core/routes/routes.dart';
 import '../../core/widgets/custom_elevated_button.dart';
 
-class LoginScreen extends StatelessWidget {
+class RegisterScreen extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneCotroller = TextEditingController();
   var formKey = GlobalKey<FormState>();
 
   @override
@@ -41,13 +43,49 @@ class LoginScreen extends StatelessWidget {
             children: [
               SizedBox(height: 53),
               Text(
-                'Sign In',
+                'Sign Up',
                 style: TextStyle(
                   fontSize: FontSizeManager.s32,
                   color: ColorManager.dark,
                 ),
               ),
               SizedBox(height: 38),
+              Text("Full Name", style: TextStyle(color: ColorManager.gray)),
+              SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    CustomeTextField(
+                      textEditingController: nameController,
+                      validator: (aa) {},
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: ColorManager.gray,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 21),
+              Text("Phone Number", style: TextStyle(color: ColorManager.gray)),
+              SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    CustomeTextField(
+                      textEditingController: phoneCotroller,
+                      validator: (aa) {},
+                      prefixIcon: Icon(
+                        Icons.phone_outlined,
+                        color: ColorManager.gray,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 21),
               Text("Email Address", style: TextStyle(color: ColorManager.gray)),
               SizedBox(height: 15),
               Padding(
@@ -65,7 +103,7 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 21),
+
               Text("Password", style: TextStyle(color: ColorManager.gray)),
               SizedBox(height: 15),
               Padding(
@@ -85,17 +123,17 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 40),
-              CustomElevatedButton(text: "Sign In", onPressed: (){}),
+              CustomElevatedButton(text: "Sign Up", onPressed: (){}),
               SizedBox(height: 29),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Iam a new user",style: TextStyle(color: ColorManager.gray,fontSize: FontSizeManager.s14),),
+                  Text("Already have an account",style: TextStyle(color: ColorManager.gray,fontSize: FontSizeManager.s14),),
                   GestureDetector(
                       onTap: (){
-                        Navigator.of(context).pushNamed(Routes.register);
+                        Navigator.of(context).pushNamed(Routes.login);
                       },
-                      child: Text("  Sign Up",style: TextStyle(color: ColorManager.blue,fontSize: FontSizeManager.s14),)),
+                      child: Text("  Sign in",style: TextStyle(color: ColorManager.blue,fontSize: FontSizeManager.s14),)),
                 ],
               )
             ],
