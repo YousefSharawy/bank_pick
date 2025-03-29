@@ -1,6 +1,6 @@
 import 'package:bank_pick/core/routes/routes.dart';
-import 'package:bank_pick/feature/auth/login_screen.dart';
-import 'package:bank_pick/feature/auth/register_screen.dart';
+import 'package:bank_pick/feature/auth/view/login_screen.dart';
+import 'package:bank_pick/feature/auth/view/register_screen.dart';
 import 'package:bank_pick/feature/home/home_screen.dart';
 import 'package:bank_pick/feature/on_boarding/on_boarding_screen.dart';
 import 'package:flutter/material.dart';
