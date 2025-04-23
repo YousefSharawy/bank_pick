@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 class FontSizeManager {
   static double s0 = 0;
+  static double s9 = 9.sp;
   static double s12 = 12.0.sp;
+  static double s13 = 13.0.sp;
   static double s14 = 14.0.sp;
   static double s15 = 15.0.sp;
   static double s16 = 16.0.sp;

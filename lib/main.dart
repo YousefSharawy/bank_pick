@@ -1,6 +1,8 @@
 import 'package:bank_pick/core/routes/route_generator.dart';
 import 'package:bank_pick/core/routes/routes.dart';
+import 'package:bank_pick/core/shared/app_theme.dart';
 import 'package:bank_pick/feature/auth/view_model/auth_view_model.dart';
+import 'package:bank_pick/feature/home/view_model/home_view_model.dart';
 import 'package:bank_pick/feature/on_boarding/on_boarding_provider.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,6 +38,7 @@ class BankPickApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
       BlocProvider(create: (_)=>AuthViewModel()),
+      BlocProvider(create: (_)=>HomeViewModel()),
       ],
       child: ChangeNotifierProvider<OnBoardingProvider>(
         create: (_) => OnBoardingProvider(),
@@ -43,7 +46,8 @@ class BankPickApp extends StatelessWidget {
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             onGenerateRoute: RouteGenerator.getRoute,
-            initialRoute:isHome ? Routes.login : Routes.onBoarding,
+            initialRoute:isHome ? Routes.navBar : Routes.onBoarding,
+            theme: AppTheme.lightTheme,
           ),
         ),
       ),

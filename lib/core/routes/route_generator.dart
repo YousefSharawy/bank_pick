@@ -1,7 +1,8 @@
 import 'package:bank_pick/core/routes/routes.dart';
+import 'package:bank_pick/core/shared/bottom_nav_bar.dart';
 import 'package:bank_pick/feature/auth/view/login_screen.dart';
 import 'package:bank_pick/feature/auth/view/register_screen.dart';
-import 'package:bank_pick/feature/home/home_screen.dart';
+import 'package:bank_pick/feature/home/view/home_screen.dart';
 import 'package:bank_pick/feature/on_boarding/on_boarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +19,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_)=>RegisterScreen());
       case Routes.home:
         return MaterialPageRoute(builder: (_)=>HomeScreen());
+      case Routes.navBar:
+        return MaterialPageRoute(builder: (_)=>BottomNavBar());
       default:
         return _unDefinedRoute();
     }
