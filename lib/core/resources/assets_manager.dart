@@ -18,5 +18,11 @@ class AssetsManager {
   static const String shopIcon= "$imagesPath/shop_icon.png";
   static const String moneyTransferIcon= "$imagesPath/money_transfer_icon.png";
   static const String spotifyIcon= "$imagesPath/spotify_icon.png";
+  static const String instaPayIcon= "$imagesPath/instapay_logo.png";
+
+  static const String lottiesPath= "assets/lotties";
+    static const String loadingIndicator= "$lottiesPath/loadinganimation.json";
+
+
 
 }

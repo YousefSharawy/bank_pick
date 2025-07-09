@@ -2,6 +2,7 @@ import 'package:bank_pick/core/routes/route_generator.dart';
 import 'package:bank_pick/core/routes/routes.dart';
 import 'package:bank_pick/core/shared/app_theme.dart';
 import 'package:bank_pick/feature/auth/view_model/auth_view_model.dart';
+import 'package:bank_pick/feature/cards/view_model/cards_view_model.dart';
 import 'package:bank_pick/feature/home/view_model/home_view_model.dart';
 import 'package:bank_pick/feature/on_boarding/on_boarding_provider.dart';
 import 'package:bloc/bloc.dart';
@@ -37,22 +38,26 @@ class BankPickApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-      BlocProvider(create: (_)=>AuthViewModel()),
-      BlocProvider(create: (_)=>HomeViewModel()),
+        BlocProvider(create: (_) => AuthViewModel()),
+        BlocProvider(create: (_) => HomeViewModel()),
+        BlocProvider(create: (_) => CardsViewModel()),
       ],
       child: ChangeNotifierProvider<OnBoardingProvider>(
         create: (_) => OnBoardingProvider(),
         child: ScreenUtilInit(
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            onGenerateRoute: RouteGenerator.getRoute,
-            initialRoute:isHome ? Routes.navBar : Routes.onBoarding,
-            theme: AppTheme.lightTheme,
-          ),
+          splitScreenMode: true,
+          minTextAdapt: true,
+
+          designSize: const Size(375, 812),
+          builder:
+              (_, __) => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                onGenerateRoute: RouteGenerator.getRoute,
+                initialRoute: isHome ? Routes.navBar : Routes.onBoarding,
+                theme: AppTheme.lightTheme,
+              ),
         ),
       ),
     );
   }
 }
-
-

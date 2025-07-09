@@ -1,5 +1,7 @@
 import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class CustomeTextField extends StatefulWidget {
   TextEditingController textEditingController;
@@ -25,19 +27,19 @@ class _CustomeTextFieldState extends State<CustomeTextField> {
           prefixIcon: widget.prefixIcon,
           errorBorder:UnderlineInputBorder(
               borderSide: BorderSide(
-                width: 2,
+                width: 2.w,
                 color: ColorManager.offWhite,
               )
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              width: 2,
+              width: 2.w,
               color: ColorManager.offWhite,
             )
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              width: 2,
+              width: 2.w,
               color: ColorManager.offWhite,
             ),
           ),

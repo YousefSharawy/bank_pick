@@ -5,14 +5,15 @@ class AppValidator {
     ).hasMatch(value);
   }
   static bool isUserExpr(String value) {
-    return RegExp(
-      r"^[A-Za-z]+ [A-Za-z]+$",
-    ).hasMatch(value);
+    return RegExp(r'^(?=.{10,}$)[A-Za-z]+( [A-Za-z]+)+$').hasMatch(value);
   }
   static bool isPhoneExpr(String value) {
     return RegExp(
       r"[0-9]{10}$",
     ).hasMatch(value);
   }
-
+  static bool isCreditCardNumber(String value) {
+    // 16 digits, grouped by 4, separated by spaces
+    return RegExp(r'^(\d{4} ){3}\d{4}$').hasMatch(value.trim());
+  }
 }
