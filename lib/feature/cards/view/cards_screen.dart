@@ -3,6 +3,7 @@ import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:bank_pick/core/resources/font_manager.dart';
 import 'package:bank_pick/core/routes/routes.dart';
 import 'package:bank_pick/core/shared/custom_transaction_section.dart';
+import 'package:bank_pick/core/utils/ui_utils.dart';
 import 'package:bank_pick/feature/cards/view/card_stack.dart';
 import 'package:bank_pick/feature/cards/view/slider.dart';
 import 'package:bank_pick/feature/cards/view_model/cards_view_model.dart';
@@ -10,6 +11,7 @@ import 'package:bank_pick/feature/cards/view_model/cards_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 class CardsScreen extends StatefulWidget {
   @override
@@ -17,18 +19,6 @@ class CardsScreen extends StatefulWidget {
 }
 
 class _CardsScreenState extends State<CardsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Ensure cards are loaded when screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final cardsProvider = context.read<CardsViewModel>();
-      if (cardsProvider.cards.isEmpty) {
-        cardsProvider.getCredits();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,136 +57,97 @@ class _CardsScreenState extends State<CardsScreen> {
           centerTitle: true,
         ),
         backgroundColor: ColorManager.transparent,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.025.h),
+        body: Stack(
+          children: [
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.025.h),
 
-                // Fixed Cards Section
-                Padding(
-                  padding: EdgeInsetsDirectional.only(start: 15.0.w),
-                  child: BlocBuilder<CardsViewModel, CardsStates>(
-                    builder: (context, state) {
-                      if (state is DisplayCardsSuccess) {
-                        final cardsProvider = context.read<CardsViewModel>();
-                        if (cardsProvider.cards.isNotEmpty) {
+                    // Fixed Cards Section
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(start: 15.0.w),
+                      child: SizedBox(
+                        height:MediaQuery.of(context).size.height * 0.25.h,
+                        child: BlocBuilder<CardsViewModel, CardsStates>(
+                        builder: (context, state) {
+                          if (state is LoadingGetCards) {
+                            return SizedBox.shrink();
+                          }
                           return CardStack();
-                        } else {
-                          return Container(
-                            height: 200.h,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.credit_card_off,
-                                    size: 50.r,
-                                    color: ColorManager.gray,
-                                  ),
-                                  SizedBox(height: 10.h),
-
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(
-                                        context,
-                                      ).pushNamed(Routes.addCards);
-                                    },
-                                    child: Text('Add Card'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                      } else if (state is LoadingGetCards) {
-                        return Container(
-                          height: 200.h,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: ColorManager.navyBlue,
-                            ),
-                          ),
-                        );
-                      } else if (state is DislpalyGetCardsError) {
-                        return Container(
-                          height: 200.h,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  color: Colors.red,
-                                  size: 40.r,
-                                ),
-                                SizedBox(height: 10.h),
-                                Text(
-                                  'Error loading cards',
-                                  style: TextStyle(
-                                    fontSize: FontSizeManager.s14,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                                SizedBox(height: 10.h),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    context.read<CardsViewModel>().getCredits();
-                                  },
-                                  child: Text('Retry'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
-                  ),
-                ),
-
-                SizedBox(height: 30.h),
-                CustomTransactionSection(
-                  label: "Apple Store",
-                  labelType: "Entertainment",
-                  price: "5,99",
-                  imagepath: AssetsManager.appleIcon,
-                ),
-                CustomTransactionSection(
-                  label: "Spotify",
-                  labelType: "Music",
-                  price: "12,99",
-                  imagepath: AssetsManager.spotifyIcon,
-                ),
-                CustomTransactionSection(
-                  label: "Money",
-                  labelType: "Transaction",
-                  price: "300",
-                  imagepath: AssetsManager.moneyTransferIcon,
-                ),
-                CustomTransactionSection(
-                  label: "Grocery",
-                  labelType: "Shopping",
-                  price: "88",
-                  imagepath: AssetsManager.shopIcon,
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.only(start: 20.0.w),
-                  child: Text(
-                    'Monthly spending limit',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: ColorManager.navyBlue,
-                      fontSize: FontSizeManager.s18,
-                      fontWeight: FontWeightManager.medium,
+                        },
+                                            ),
+                      ),
                     ),
-                  ),
+
+                    SizedBox(height: 30.h),
+                         SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.2.h,
+                           child: BlocBuilder<CardsViewModel, CardsStates>(
+                             builder: (_, state) {
+                               final cardsViewModel = context.read<CardsViewModel>();
+                               final cardsTrans = cardsViewModel.currentCardTransactions;
+                               if(state is LoadingGetTransaction){
+                                  UIUtils.showLoading(context);
+                               }
+                           
+                               return ListView.builder(
+                                 itemBuilder: (_, index) {
+                                   return CustomTransactionSection(
+                                     label: 'Transaction',
+                                     labelType: cardsTrans[index].f_type,
+                                     imagepath: AssetsManager.moneyTransferIcon,
+                                     price: cardsTrans[index].amount.toString(),
+                                   );
+                                 },
+                                 itemCount: cardsTrans.length,
+                               );
+                             },
+                           ),
+                         ),
+                                             SizedBox(height: 20.h),
+
+                    Padding(
+                      padding: EdgeInsetsDirectional.only(start: 20.0.w),
+                      child: Text(
+                        'Monthly spending limit',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: ColorManager.navyBlue,
+                          fontSize: FontSizeManager.s18,
+                          fontWeight: FontWeightManager.medium,
+                        ),
+                      ),
+                    ),
+                    CustomSlider(),
+                  ],
                 ),
-                CustomSlider(),
-              ],
+              ),
             ),
-          ),
+
+            // Full screen loading overlay
+            BlocBuilder<CardsViewModel, CardsStates>(
+              builder: (context, state) {
+                if ( state is GetLimitLoading) {
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.black.withOpacity(0.7),
+                    child: Center(
+                      child: Lottie.asset(
+                        AssetsManager.loadingIndicator,
+                        width: 100.w,
+                        height: 100.h,
+                      ),
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              },
+            ),
+          ],
         ),
       ),
     );

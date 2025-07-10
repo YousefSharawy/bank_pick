@@ -21,7 +21,7 @@ class CardsViewModel extends Cubit<CardsStates> {
 
   List<CardModel> cards = [];
   List<TransactionModel> allTransactions = [];
-  List<TransactionModel> recieveingTransactions = [];
+  List<TransactionModel> currentCardTransactions   = [];
   String currentCreditCard = "";
   String getCardId(int index) => cards[index].cardNumber;
 
@@ -235,47 +235,61 @@ class CardsViewModel extends Cubit<CardsStates> {
   }
 
   Future getTransactions() async {
-    try {
-      emit(LoadingGetTransaction());
+  try {
+    emit(LoadingGetTransaction());
 
-      if (cards.isNotEmpty) {
-        allTransactions.clear();
-
-        final currentCardResponse = await Supabase.instance.client
-            .from('transactions')
-            .select()
-            .eq('credit_number', currentCreditCard)
-            .order('created_at', ascending: false);
-        allTransactions =
-            currentCardResponse
-                .map((e) => TransactionModel.fromJson(e))
-                .toList();
-
-        final secondCardResponse = await Supabase.instance.client
-            .from('transactions')
-            .select()
-            .eq(
-              'credit_number',
-              index == 0 ? getCardId(1) : getCardId(0),
-            )
-            .order('created_at', ascending: false);
-
-        allTransactions.addAll(
-          secondCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
-        );
-        allTransactions.sort((a, b) => b.created_at.compareTo(a.created_at));
-
-        emit(TreansactionGetSuccess());
-
-        _setupRealtimeSubscription();
-      } else {
-        emit(TreansactionGetError("No cards found"));
-      }
-    } catch (e) {
-      emit(TreansactionGetError(e.toString()));
+    if (cards.isEmpty) {
+      emit(TreansactionGetError("No cards found"));
+      return;
     }
-  }
 
+    if (currentCreditCard.isEmpty) {
+      currentCreditCard = cards[0].cardNumber;
+      index = 0;
+    }
+
+    List<TransactionModel> tempTransactions = [];
+
+    final currentCardResponse = await Supabase.instance.client
+        .from('transactions')
+        .select()
+        .eq('credit_number', currentCreditCard)
+        .order('created_at', ascending: false);
+    
+    tempTransactions.addAll(
+      currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+    );
+    
+    currentCardTransactions.clear();
+    currentCardTransactions.addAll(
+      currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+    );
+
+    if (cards.length > 1) {
+      final secondCardNumber = index == 0 ? cards[1].cardNumber : cards[0].cardNumber;
+      
+      final secondCardResponse = await Supabase.instance.client
+          .from('transactions')
+          .select()
+          .eq('credit_number', secondCardNumber)
+          .order('created_at', ascending: false);
+
+      tempTransactions.addAll(
+        secondCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+      );
+    }
+
+    tempTransactions.sort((a, b) => b.created_at.compareTo(a.created_at));
+
+    allTransactions.clear();
+    allTransactions.addAll(tempTransactions);
+
+    emit(TreansactionGetSuccess());
+    _setupRealtimeSubscription();
+  } catch (e) {
+    emit(TreansactionGetError(e.toString()));
+  }
+}
   void _setupRealtimeSubscription() {
     // Cancel existing subscription if any
     _channel?.unsubscribe();

@@ -58,8 +58,8 @@ class _CustomSliderState extends State<CustomSlider> {
             ),
             SfSlider(
               activeColor: ColorManager.blue,
-              min: widget.min.w,
-              max: widget.max.w,
+              min: widget.min,
+              max: widget.max,
               value: bloc.limit,
               showLabels: true,
               enableTooltip: false,

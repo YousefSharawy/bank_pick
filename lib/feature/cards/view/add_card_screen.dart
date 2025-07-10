@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:provider/provider.dart';
 
 class AddCardScreen extends StatefulWidget {
   const AddCardScreen({super.key});
@@ -121,7 +122,6 @@ class AddCardScreenState extends State<AddCardScreen> {
                               UIUtils.hideLoading(context);
                               UIUtils.showMessage('Card add Successfully');
                             } else if (state is GetCardsError) {
-                              UIUtils.hideLoading(context);
                               UIUtils.showMessage(
                                 'Can\'t have more than two cards',
                               );

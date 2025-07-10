@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:bank_pick/core/resources/assets_manager.dart';
+import 'package:bank_pick/core/utils/ui_utils.dart';
 import 'package:bank_pick/core/widgets/custom_card.dart';
 import 'package:bank_pick/feature/cards/view_model/cards_states.dart';
 import 'package:bank_pick/feature/cards/view_model/cards_view_model.dart';
@@ -30,6 +31,7 @@ class _CardStackPageState extends State<CardStack> {
   Widget build(BuildContext context) {
     return BlocBuilder<CardsViewModel, CardsStates>(
       builder: (context, state) {
+       
         final bloc = BlocProvider.of<CardsViewModel>(context);
         return Column(
           children: [
@@ -72,7 +74,6 @@ class _CardStackPageState extends State<CardStack> {
   ) {
     final bloc = BlocProvider.of<CardsViewModel>(context);
     bloc.updateIndex(currentIndex ?? 0);
-    bloc.getValue();
     return true;
   }
 

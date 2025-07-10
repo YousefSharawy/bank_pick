@@ -84,13 +84,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Padding(
                     padding: EdgeInsetsDirectional.only(start: 10.w, end: 10.w),
-                    child: BlocBuilder<CardsViewModel, CardsStates>(
-                      builder: (context, state) {
-                        if (state is LoadingGetCards) {
-                          return SizedBox.shrink();
-                        }
-                        return CardStack();
-                      },
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.25.h,
+                      child: BlocBuilder<CardsViewModel, CardsStates>(
+                        builder: (context, state) {
+                          if (state is LoadingGetCards) {
+                            return SizedBox.shrink();
+                          }
+                          return CardStack();
+                        },
+                      ),
                     ),
                   ),
                   SizedBox(height: 35.h),
@@ -146,6 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (_, state) {
                         final cardsViewModel = context.read<CardsViewModel>();
                         final alltrans = cardsViewModel.allTransactions;
+                        if(state is LoadingGetTransaction){
+                           UIUtils.showLoading(context);
+                        }
 
                         return ListView.builder(
                           itemBuilder: (_, index) {
