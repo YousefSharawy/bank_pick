@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+      final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
     OnBoardingProvider onBoardingProvider =  Provider.of<OnBoardingProvider>(context,listen: false);
     return WillPopScope(
       onWillPop:() async {
@@ -44,19 +47,19 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               children: [
                 OnBoardingPages(
                   pageController: pageController,
-                  imagePadding: 145,
-                  textPadding: 270,
+                  imagePadding: screenHeight*0.1.h,
+                  textPadding: screenHeight*0.2.h,
                   title:"""Fastest Payment in
         the world""",
                   subTitle: """Integrate multiple payment methods
-         to help you up the process quickly""",
+   to help you up the process quickly""",
                   image: AssetsManager.onBoarding1,
                 ),
 
                 OnBoardingPages(
                   pageController: pageController,
-                  imagePadding: 127,
-                  textPadding: 242,
+                  imagePadding:screenHeight*0.077.h,
+                  textPadding: screenHeight*0.185.h,
                   title:"""     The most Secure 
 Platform for Customer""",
                   subTitle: """  Built-in Fingerprint, face recognition
@@ -65,8 +68,8 @@ and more, keeping you completely safe""",
                 ),
                 OnBoardingPages(
                   pageController: pageController,
-                  imagePadding: 120,
-                  textPadding: 237,
+                  imagePadding: screenHeight*0.077.h,
+                  textPadding: screenHeight*0.179.h,
                   title: """    Paying for Everything is 
       Easy and Convenient""",
                   subTitle: """        Built-in Fingerprint,face recognition 
@@ -76,30 +79,27 @@ and more, keeping you completely safe""",
               ],
             ),
             PositionedDirectional(
-              top: 500,
+              top: screenHeight*0.5.h,
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 150.0),
-                    child: SmoothPageIndicator(
-                      controller: pageController,
-                      effect: ExpandingDotsEffect(
-                        spacing: 10,
-                        dotHeight: 8,
-                        dotWidth: 8,
-                        dotColor: ColorManager.dotColor,
-                        activeDotColor: ColorManager.blue,
-                      ),
-                      count: 3,
-                      onDotClicked:
-                          (index) => pageController.animateToPage(
-                            index,
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.easeIn,
-                          ),
+                  SmoothPageIndicator(
+                    controller: pageController,
+                    effect: ExpandingDotsEffect(
+                      spacing: 10,
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      dotColor: ColorManager.dotColor,
+                      activeDotColor: ColorManager.blue,
                     ),
+                    count: 3,
+                    onDotClicked:
+                        (index) => pageController.animateToPage(
+                          index,
+                          duration: Duration(milliseconds: 600),
+                          curve: Curves.easeIn,
+                        ),
                   ),
-                  SizedBox(height: 220),
+                 SizedBox(height: screenHeight*0.25.h),
                   CustomElevatedButton(
                     text: "Next",
                     onPressed: () {

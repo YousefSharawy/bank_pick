@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../core/resources/color_manager.dart';
 import '../../core/resources/font_manager.dart';
@@ -26,11 +27,11 @@ class OnBoardingPages extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: imagePadding),
+          padding: EdgeInsets.only(top: imagePadding.h),
           child: Image.asset(image),
         ),
         Padding(
-          padding: EdgeInsets.only(top: textPadding),
+          padding: EdgeInsets.only(top: textPadding).h,
           child: Text(
             title,
             style: TextStyle(
@@ -40,7 +41,7 @@ class OnBoardingPages extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 10),
+          padding:  EdgeInsetsDirectional.only(top: 10.h),
           child: Text(
             subTitle,
             style: TextStyle(

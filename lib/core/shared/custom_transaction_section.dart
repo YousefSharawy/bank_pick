@@ -1,7 +1,8 @@
-import 'package:bank_pick/core/resources/assets_manager.dart';
 import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:bank_pick/core/resources/font_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 class CustomTransactionSection extends StatelessWidget {
   //IconData CustomImageIcon;
@@ -9,7 +10,7 @@ class CustomTransactionSection extends StatelessWidget {
   String labelType;
   String price;
   String imagepath;
-  CustomTransactionSection({
+   CustomTransactionSection({
     required this.label,
     required this.labelType,
     required this.imagepath,
@@ -19,7 +20,7 @@ class CustomTransactionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+      padding:  EdgeInsets.symmetric(horizontal: 20.0.w, vertical: 15.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -28,19 +29,21 @@ class CustomTransactionSection extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
+                    width: 42.w,
+                    height: 42.h,
 
                     decoration: BoxDecoration(
+                      color: ColorManager.offWhite,
                       image: DecorationImage(
                         image: AssetImage(imagepath),
                         fit: BoxFit.none,
                         scale: 0.60,
+                        
                       ),
                       shape: BoxShape.circle,
                     ),
                   ),
-                  SizedBox(width: 19),
+                  SizedBox(width: 19.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -67,11 +70,10 @@ class CustomTransactionSection extends StatelessWidget {
             ],
           ),
 
-          // SizedBox(width: 18,),
           Padding(
-            padding: const EdgeInsets.only(right: 10.0),
+            padding:  EdgeInsets.only(right: 10.0.w),
             child: Text(
-              "-\$${price}",
+              "\$${price}",
               style: TextStyle(
                 fontSize: FontSizeManager.s16,
                 fontWeight: FontWeightManager.medium,

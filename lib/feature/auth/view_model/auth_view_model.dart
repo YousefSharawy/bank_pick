@@ -33,7 +33,6 @@ class AuthViewModel extends Cubit<AuthStates> {
       emit(LoginSuccess());
 
     } on AuthException catch (error) {
-      String? msg;
       if (error.message == 'email_not_confirmed') {
         emit(
           LoginError(

@@ -1,6 +1,6 @@
 import 'package:bank_pick/core/resources/assets_manager.dart';
 import 'package:bank_pick/core/resources/color_manager.dart';
-import 'package:bank_pick/feature/cards/cards_screen.dart';
+import 'package:bank_pick/feature/cards/view/cards_screen.dart';
 import 'package:bank_pick/feature/home/view/home_screen.dart';
 import 'package:bank_pick/feature/settings/settings_screen.dart';
 import 'package:bank_pick/feature/statistics/statistics.dart';
@@ -25,7 +25,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
-  
+        color: ColorManager.offWhite,
         shape: CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
         notchMargin: 0,

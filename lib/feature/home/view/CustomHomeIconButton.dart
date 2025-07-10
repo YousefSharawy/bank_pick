@@ -1,27 +1,29 @@
 import 'package:bank_pick/core/resources/color_manager.dart';
-import 'package:bank_pick/core/widgets/custom_elevated_button.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:flutter/material.dart';
 
 class CustomHomeIconButton extends StatelessWidget {
   IconData ?cutsomIcon;
   Widget ?customImage;
   String label;
-  CustomHomeIconButton({required this.label,this.cutsomIcon,this.customImage});
+  VoidCallback ?onPressed;
+  CustomHomeIconButton({required this.label,this.cutsomIcon,this.customImage,this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         IconButton(
-          onPressed: () {},
+          onPressed: onPressed,
           icon:  customImage ?? Icon(cutsomIcon),
           style: IconButton.styleFrom(
-            fixedSize: Size(54, 54),
+            fixedSize: Size(54.h, 54.w),
             backgroundColor: ColorManager.offWhite,
             shape: CircleBorder(),
           ),
         ),
-        SizedBox(height: 7,),
+        SizedBox(height: 7.h,),
         Text(label),
       ],
     );

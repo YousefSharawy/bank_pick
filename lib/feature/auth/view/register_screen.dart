@@ -6,6 +6,7 @@ import 'package:bank_pick/feature/auth/view_model/auth_states.dart';
 import 'package:bank_pick/feature/auth/view_model/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/routes/routes.dart';
 import '../../../core/utils/ui_utils.dart';
@@ -34,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         backgroundColor: ColorManager.transparent,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 15.0),
+          padding:   EdgeInsetsDirectional.only(start: 15.0.w),
           child: Container(
             decoration: BoxDecoration(
               color: ColorManager.offWhite,
@@ -51,15 +52,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(left: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+          padding: EdgeInsetsDirectional.only(start: 20.w,
+            bottom: MediaQuery.of(context).viewInsets.bottom.h,
           ),
           child: Form(
             key: formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 53),
+                SizedBox(height: MediaQuery.of(context).size.height*0.05.h),
                 Text(
                   'Sign Up',
                   style: TextStyle(
@@ -67,11 +68,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     color: ColorManager.dark,
                   ),
                 ),
-                SizedBox(height: 38),
+                SizedBox(height: 38.h),
                 Text("Full Name", style: TextStyle(color: ColorManager.gray)),
-                SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding:   EdgeInsetsDirectional.only(start: 10.w),
                   child: Row(
                     children: [
                       CustomeTextField(
@@ -93,14 +94,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 21),
+                SizedBox(height: 21.h),
                 Text(
                   "Phone Number",
                   style: TextStyle(color: ColorManager.gray),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding:  EdgeInsetsDirectional.only(start: 10.w),
                   child: Row(
                     children: [
                       CustomeTextField(
@@ -122,14 +123,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 21),
+                SizedBox(height: 21.h),
                 Text(
                   "Email Address",
                   style: TextStyle(color: ColorManager.gray),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 15.h),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding:   EdgeInsetsDirectional.only(start: 10.w),
                   child: Row(
                     children: [
                       CustomeTextField(
@@ -154,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Text("Password", style: TextStyle(color: ColorManager.gray)),
                 SizedBox(height: 15),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding:   EdgeInsetsDirectional.only(start: 10.w),
                   child: Row(
                     children: [
                       CustomeTextField(
@@ -174,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 40.h),
                 BlocListener<AuthViewModel, AuthStates>(
                   listener: (_, state) {
                     if (state is RegisterLoading) {
@@ -194,7 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onPressed: register,
                   ),
                 ),
-                SizedBox(height: 29),
+                SizedBox(height: 29.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
