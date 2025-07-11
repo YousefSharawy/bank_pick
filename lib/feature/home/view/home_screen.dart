@@ -25,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final homeProvider = context.read<HomeViewModel>();
-    final cardsProvider = context.read<CardsViewModel>();
 
     return Container(
       decoration: BoxDecoration(

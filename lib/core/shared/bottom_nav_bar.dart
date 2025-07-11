@@ -3,7 +3,7 @@ import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:bank_pick/feature/cards/view/cards_screen.dart';
 import 'package:bank_pick/feature/home/view/home_screen.dart';
 import 'package:bank_pick/feature/settings/settings_screen.dart';
-import 'package:bank_pick/feature/statistics/statistics.dart';
+import 'package:bank_pick/feature/statistics/statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -17,7 +17,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   List<Widget> screens = [
     HomeScreen(),
     CardsScreen(),
-    Statistics(),
+    StatisticsScreen(),
     SettingsScreen(),
   ];
   int currerntTappedIndex =0;

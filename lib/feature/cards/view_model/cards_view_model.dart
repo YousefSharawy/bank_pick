@@ -21,9 +21,17 @@ class CardsViewModel extends Cubit<CardsStates> {
 
   List<CardModel> cards = [];
   List<TransactionModel> allTransactions = [];
-  List<TransactionModel> currentCardTransactions   = [];
+  List<TransactionModel> currentCardTransactions = [];
   String currentCreditCard = "";
   String getCardId(int index) => cards[index].cardNumber;
+  int currentMonth = DateTime.now().month;
+  int currentYear = DateTime.now().year;
+  int lastActiveMonth = DateTime.now().month;
+  List<TransactionModel> specificTransactions = [];
+  
+  void updateSelectedMonth(int month) {
+    currentMonth = month;
+  }
 
   void updateIndex(int newIndex) async {
     index = newIndex;
@@ -35,6 +43,17 @@ class CardsViewModel extends Cubit<CardsStates> {
   Future setValue(double l) async {
     try {
       emit(SetLimitLoading());
+      if (currentMonth != lastActiveMonth) {
+        lastActiveMonth = currentMonth;
+        await Supabase.instance.client
+            .from('cards')
+            .update({"limit": 0})
+            .eq("card_number", currentCreditCard);
+        limit = 0;
+        emit(SetLimitSuccess());
+        return;
+      }
+
       final cardId = cards[index].cardNumber;
       await Supabase.instance.client
           .from('cards')
@@ -235,61 +254,74 @@ class CardsViewModel extends Cubit<CardsStates> {
   }
 
   Future getTransactions() async {
-  try {
-    emit(LoadingGetTransaction());
+    try {
+      emit(LoadingGetTransaction());
 
-    if (cards.isEmpty) {
-      emit(TreansactionGetError("No cards found"));
-      return;
-    }
+      if (cards.isEmpty) {
+        emit(TreansactionGetError("No cards found"));
+        return;
+      }
 
-    if (currentCreditCard.isEmpty) {
-      currentCreditCard = cards[0].cardNumber;
-      index = 0;
-    }
+      if (currentCreditCard.isEmpty) {
+        currentCreditCard = cards[0].cardNumber;
+        index = 0;
+      }
 
-    List<TransactionModel> tempTransactions = [];
+      List<TransactionModel> tempTransactions = [];
 
-    final currentCardResponse = await Supabase.instance.client
-        .from('transactions')
-        .select()
-        .eq('credit_number', currentCreditCard)
-        .order('created_at', ascending: false);
-    
-    tempTransactions.addAll(
-      currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
-    );
-    
-    currentCardTransactions.clear();
-    currentCardTransactions.addAll(
-      currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
-    );
-
-    if (cards.length > 1) {
-      final secondCardNumber = index == 0 ? cards[1].cardNumber : cards[0].cardNumber;
-      
-      final secondCardResponse = await Supabase.instance.client
+      final currentCardResponse = await Supabase.instance.client
           .from('transactions')
           .select()
-          .eq('credit_number', secondCardNumber)
+          .eq('credit_number', currentCreditCard)
           .order('created_at', ascending: false);
 
       tempTransactions.addAll(
-        secondCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+        currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
       );
+
+      currentCardTransactions.clear();
+      currentCardTransactions.addAll(
+        currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+      );
+
+      if (cards.length > 1) {
+        final secondCardNumber =
+            index == 0 ? cards[1].cardNumber : cards[0].cardNumber;
+
+        final secondCardResponse = await Supabase.instance.client
+            .from('transactions')
+            .select()
+            .eq('credit_number', secondCardNumber)
+            .order('created_at', ascending: false);
+
+        tempTransactions.addAll(
+          secondCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+        );
+      }
+
+      tempTransactions.sort((a, b) => b.created_at.compareTo(a.created_at));
+
+      allTransactions.clear();
+      allTransactions.addAll(tempTransactions);
+
+      specificTransactions.clear();
+      specificTransactions =
+          allTransactions
+              .where(
+                (tx) =>
+                    tx.creditNumber == currentCreditCard &&
+                    tx.created_at.year == currentYear &&
+                    tx.created_at.month == currentMonth,
+              )
+              .toList();
+
+      emit(TreansactionGetSuccess());
+      _setupRealtimeSubscription();
+    } catch (e) {
+      emit(TreansactionGetError(e.toString()));
     }
-
-    tempTransactions.sort((a, b) => b.created_at.compareTo(a.created_at));
-
-    allTransactions.clear();
-    allTransactions.addAll(tempTransactions);
-
-    emit(TreansactionGetSuccess());
-    _setupRealtimeSubscription();
-  } catch (e) {
-    emit(TreansactionGetError(e.toString()));
   }
-}
+
   void _setupRealtimeSubscription() {
     // Cancel existing subscription if any
     _channel?.unsubscribe();
