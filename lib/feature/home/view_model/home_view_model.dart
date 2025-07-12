@@ -15,15 +15,14 @@ class HomeViewModel extends Cubit<HomeStates> {
 
     if(currUser?.name == null){names = await Supabase.instance.client
         .from('users')
-        .select('name')
+        .select()
         .eq("id", "$currentUserId");
 
     currUser = UserModel(
       id: currentUserId ?? "",
       name: names[0]["name"],
-      email: "",
-      phone: "",
-      profileImage: "",
+      email: names[0]["email"],
+      phone: names[0]["phone"],
     );}
 
 

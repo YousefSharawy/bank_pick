@@ -5,6 +5,7 @@ import 'package:bank_pick/feature/auth/view_model/auth_view_model.dart';
 import 'package:bank_pick/feature/cards/view_model/cards_view_model.dart';
 import 'package:bank_pick/feature/home/view_model/home_view_model.dart';
 import 'package:bank_pick/feature/on_boarding/on_boarding_provider.dart';
+import 'package:bank_pick/feature/settings/view_model/settings_view_model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,6 +42,7 @@ class BankPickApp extends StatelessWidget {
         BlocProvider(create: (_) => AuthViewModel()),
         BlocProvider(create: (_) => HomeViewModel()),
         BlocProvider(create: (_) => CardsViewModel()),
+        BlocProvider(create: (_) => SettingsViewModel()),
       ],
       child: ChangeNotifierProvider<OnBoardingProvider>(
         create: (_) => OnBoardingProvider(),

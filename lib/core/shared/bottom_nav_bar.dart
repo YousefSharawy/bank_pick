@@ -2,8 +2,8 @@ import 'package:bank_pick/core/resources/assets_manager.dart';
 import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:bank_pick/feature/cards/view/cards_screen.dart';
 import 'package:bank_pick/feature/home/view/home_screen.dart';
-import 'package:bank_pick/feature/settings/settings_screen.dart';
-import 'package:bank_pick/feature/statistics/statistics_screen.dart';
+import 'package:bank_pick/feature/settings/view/settings_screen.dart';
+import 'package:bank_pick/feature/statistics/view/statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {

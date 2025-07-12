@@ -8,6 +8,7 @@ class Routes {
   static const String topUp ='/TopUp';
   static const String sendMoney ='/sendMoney';
   static const String allTransactions ='/alltransctions';
-  
+  static const String changePassword ='/changePassword';
+  static const String personalInformation ='/personalInformation';
 
 }

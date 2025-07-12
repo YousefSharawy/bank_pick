@@ -8,6 +8,7 @@ import 'package:bank_pick/feature/cards/view_model/cards_view_model.dart';
 import 'package:bank_pick/feature/home/view/CustomHomeIconButton.dart';
 import 'package:bank_pick/feature/home/view_model/home_states.dart';
 import 'package:bank_pick/feature/home/view_model/home_view_model.dart';
+import 'package:bank_pick/feature/settings/view_model/settings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bank_pick/feature/cards/view_model/cards_states.dart';
@@ -44,10 +45,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsetsDirectional.only(start: 10.w, end: 10.w),
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          foregroundImage: AssetImage(AssetsManager.avatar),
-                          minRadius: 28.r,
-                          backgroundColor: ColorManager.offWhite,
+                        BlocBuilder<CardsViewModel, CardsStates>(
+                          builder: (context, state) {
+                            final settingsProvider =
+                                context.read<SettingsViewModel>();
+
+                            return CircleAvatar(
+                              foregroundImage:
+                                  settingsProvider.image != null
+                                      ? FileImage(settingsProvider.image!)
+                                      : AssetImage(AssetsManager.avatar),
+                              minRadius: 20.r,
+                              backgroundColor: ColorManager.offWhite,
+                            );
+                          },
                         ),
                         SizedBox(width: 16.w),
                         Column(
@@ -148,8 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (_, state) {
                         final cardsViewModel = context.read<CardsViewModel>();
                         final alltrans = cardsViewModel.allTransactions;
-                        if(state is LoadingGetTransaction){
-                           UIUtils.showLoading(context);
+                        if (state is LoadingGetTransaction) {
+                          UIUtils.showLoading(context);
                         }
 
                         return ListView.builder(

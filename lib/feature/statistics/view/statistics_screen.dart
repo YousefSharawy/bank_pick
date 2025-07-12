@@ -1,7 +1,7 @@
 import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:bank_pick/core/resources/assets_manager.dart';
-import 'package:bank_pick/feature/statistics/custom_chart.dart';
-import 'package:bank_pick/feature/statistics/month_selector.dart';
+import 'package:bank_pick/feature/statistics/view/custom_chart.dart';
+import 'package:bank_pick/feature/statistics/view/month_selector.dart';
 import 'package:flutter/material.dart';
 
 class StatisticsScreen extends StatefulWidget {
