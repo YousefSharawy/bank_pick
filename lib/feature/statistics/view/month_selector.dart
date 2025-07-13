@@ -113,6 +113,14 @@ class _MonthSelectorState extends State<MonthSelector> {
               if (state is LoadingGetTransaction) {
                return  UIUtils.showLoading(context);
               }
+              if(cardViewModel.specificTransactions.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No transactions found for ${months[activeMonthIndex]}',
+                    style: TextStyle(fontSize: 16.sp, color: ColorManager.gray),
+                  ),
+                );
+              }
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: cardViewModel.specificTransactions.length,

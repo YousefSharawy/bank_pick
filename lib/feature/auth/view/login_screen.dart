@@ -3,8 +3,10 @@ import 'package:bank_pick/core/resources/font_manager.dart';
 import 'package:bank_pick/core/utils/ui_utils.dart';
 import 'package:bank_pick/core/widgets/custome_text_field.dart';
 import 'package:bank_pick/feature/auth/view_model/auth_states.dart';
+import 'package:bank_pick/feature/on_boarding/on_boarding_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import '../../../core/routes/routes.dart';
 import '../../../core/utils/app_validator.dart';
 import '../../../core/widgets/custom_elevated_button.dart';
@@ -40,6 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: IconButton(
               onPressed: () {
+                Provider.of<OnBoardingProvider>(context, listen: false)
+                    .isLast = false;
                 Navigator.of(context).popAndPushNamed(Routes.onBoarding);
               },
               icon: Icon(Icons.arrow_back_ios_new_outlined),

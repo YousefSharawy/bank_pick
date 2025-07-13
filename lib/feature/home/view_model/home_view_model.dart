@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeViewModel extends Cubit<HomeStates> {
   HomeViewModel() : super(HomeInit()) {getUsers();}
-  final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+  final currentUserId = Supabase.instance.client.auth.currentUser!.id;
   PostgrestList names = [];
   UserModel? currUser;
 

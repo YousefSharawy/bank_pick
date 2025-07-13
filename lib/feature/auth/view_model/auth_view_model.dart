@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bank_pick/feature/auth/view_model/auth_states.dart';
 import 'package:bloc/bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,11 +15,18 @@ class AuthViewModel extends Cubit<AuthStates> {
   ) async {
     emit(RegisterLoading());
     try {
-      await Supabase.instance.client.auth.signUp(
+      final response = await Supabase.instance.client.auth.signUp(
         email: email,
         password: password,
       );
+     
       emit(RegisterSuccess());
+       await Supabase.instance.client.from('users').insert({
+          'id': response.user!.id,
+          'email': email,
+          'name': name,
+          'phone': phone,
+        });
     } catch (error) {
       return emit(RegisterError(error.toString()));
     }
@@ -30,7 +39,8 @@ class AuthViewModel extends Cubit<AuthStates> {
         password: password,
         email: email,
       );
-      emit(LoginSuccess());
+
+        emit(LoginSuccess());
 
     } on AuthException catch (error) {
       if (error.message == 'email_not_confirmed') {

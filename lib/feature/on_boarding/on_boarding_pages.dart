@@ -31,7 +31,7 @@ class OnBoardingPages extends StatelessWidget {
           child: Image.asset(image),
         ),
         Padding(
-          padding: EdgeInsets.only(top: textPadding).h,
+          padding: EdgeInsets.only(top: textPadding.h),
           child: Text(
             title,
             style: TextStyle(

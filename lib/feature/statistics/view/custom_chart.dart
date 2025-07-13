@@ -24,11 +24,11 @@ class _CustomChartState extends State<CustomChart> {
   ];
 
   bool showAvg = false;
-  List<double> balanceHistory = [50000.0];
+  List<double> balanceHistory = [0.0];
   List<DateTime> transactionTimes = [DateTime.now()];
   RealtimeChannel? _balanceChannel;
-  double currentBalance = 50000.0;
-  final double STARTING_BALANCE = 50000.0;
+  double currentBalance = 0 ;
+  final double STARTING_BALANCE = 0.0;
   String? currentCardId;
   bool isInitialized = false;
   DateTime? lastBalanceCheck;

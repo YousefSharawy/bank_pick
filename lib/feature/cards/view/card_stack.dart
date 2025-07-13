@@ -31,8 +31,10 @@ class _CardStackPageState extends State<CardStack> {
   Widget build(BuildContext context) {
     return BlocBuilder<CardsViewModel, CardsStates>(
       builder: (context, state) {
-       
         final bloc = BlocProvider.of<CardsViewModel>(context);
+        if(bloc.cards.isEmpty) {
+          return Center(child: Text("No cards added yet", style: TextStyle(fontSize: 18.sp, color: Colors.grey)));
+        }
         return Column(
           children: [
             SizedBox(

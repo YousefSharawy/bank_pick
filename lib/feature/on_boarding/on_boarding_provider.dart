@@ -16,7 +16,8 @@ notifyListeners();
   }
   void nextF(PageController pageController) {
     pageController.nextPage(
-      duration: Duration(milliseconds: 500),
+      
+      duration: Duration(milliseconds: 200),
       curve: Curves.bounceInOut,
     );
   }

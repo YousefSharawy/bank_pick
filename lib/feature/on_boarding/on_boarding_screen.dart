@@ -16,6 +16,7 @@ class OnBoardingScreen extends StatefulWidget {
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final pageController = PageController();
+  
   @override
   void dispose() {
     pageController.dispose();
@@ -24,43 +25,41 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-      final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
-    OnBoardingProvider onBoardingProvider =  Provider.of<OnBoardingProvider>(context,listen: false);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    OnBoardingProvider onBoardingProvider = Provider.of<OnBoardingProvider>(context, listen: false);
+    
     return WillPopScope(
-      onWillPop:() async {
-        // This will exit the app and return to the home screen
+      onWillPop: () async {
         SystemNavigator.pop();
-        return Future.value(false); // Return false to prevent default back navigation
+        return Future.value(false);
       },
       child: Scaffold(
         body: Stack(
-          alignment: Alignment.center,
-          fit: StackFit.expand,
           children: [
+            // PageView takes full screen
             PageView(
-              onPageChanged:(value) {
-               onBoardingProvider.onPageChanged(value);
+              physics: BouncingScrollPhysics(),
+              onPageChanged: (value) {
+                onBoardingProvider.onPageChanged(value);
               },
-
               controller: pageController,
               children: [
                 OnBoardingPages(
                   pageController: pageController,
-                  imagePadding: screenHeight*0.1.h,
-                  textPadding: screenHeight*0.2.h,
-                  title:"""Fastest Payment in
+                  imagePadding: screenHeight * 0.1.h,
+                  textPadding: screenHeight * 0.2.h,
+                  title: """Fastest Payment in
         the world""",
                   subTitle: """Integrate multiple payment methods
    to help you up the process quickly""",
                   image: AssetsManager.onBoarding1,
                 ),
-
                 OnBoardingPages(
                   pageController: pageController,
-                  imagePadding:screenHeight*0.077.h,
-                  textPadding: screenHeight*0.185.h,
-                  title:"""     The most Secure 
+                  imagePadding: screenHeight * 0.077.h,
+                  textPadding: screenHeight * 0.185.h,
+                  title: """     The most Secure 
 Platform for Customer""",
                   subTitle: """  Built-in Fingerprint, face recognition
 and more, keeping you completely safe""",
@@ -68,8 +67,8 @@ and more, keeping you completely safe""",
                 ),
                 OnBoardingPages(
                   pageController: pageController,
-                  imagePadding: screenHeight*0.077.h,
-                  textPadding: screenHeight*0.179.h,
+                  imagePadding: screenHeight * 0.077.h,
+                  textPadding: screenHeight * 0.179.h,
                   title: """    Paying for Everything is 
       Easy and Convenient""",
                   subTitle: """        Built-in Fingerprint,face recognition 
@@ -78,40 +77,44 @@ and more, keeping you completely safe""",
                 ),
               ],
             ),
-            PositionedDirectional(
-              top: screenHeight*0.5.h,
-              child: Column(
-                children: [
-                  SmoothPageIndicator(
-                    controller: pageController,
-                    effect: ExpandingDotsEffect(
-                      spacing: 10,
-                      dotHeight: 8,
-                      dotWidth: 8,
-                      dotColor: ColorManager.dotColor,
-                      activeDotColor: ColorManager.blue,
-                    ),
-                    count: 3,
-                    onDotClicked:
-                        (index) => pageController.animateToPage(
-                          index,
-                          duration: Duration(milliseconds: 600),
-                          curve: Curves.easeIn,
-                        ),
-                  ),
-                 SizedBox(height: screenHeight*0.25.h),
-                  CustomElevatedButton(
-                    text: "Next",
-                    onPressed: () {
-                     if(onBoardingProvider.isLast){
-                       onBoardingProvider.nextL(context);
-                     }
-                     else{
+            
+            // Dots positioned in the center of screen
+            Center(
+              child: SmoothPageIndicator(
+                controller: pageController,
+                effect: ExpandingDotsEffect(
+                  spacing: 10,
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  dotColor: ColorManager.dotColor,
+                  activeDotColor: ColorManager.blue,
+                ),
+                count: 3,
+                onDotClicked: (index) => pageController.animateToPage(
+                  index,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                ),
+              ),
+            ),
+            
+            // Button positioned at bottom
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 40.h,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: CustomElevatedButton(
+                  text: "Next",
+                  onPressed: () {
+                    if (onBoardingProvider.isLast) {
+                      onBoardingProvider.nextL(context);
+                    } else {
                       onBoardingProvider.nextF(pageController);
-                     }
-                    },
-                  ),
-                ],
+                    }
+                  },
+                ),
               ),
             ),
           ],
@@ -119,5 +122,4 @@ and more, keeping you completely safe""",
       ),
     );
   }
-
 }

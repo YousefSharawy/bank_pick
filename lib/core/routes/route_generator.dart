@@ -8,7 +8,6 @@ import 'package:bank_pick/feature/home/view/home_screen.dart';
 import 'package:bank_pick/feature/home/view/send_money_screen.dart';
 import 'package:bank_pick/feature/home/view/topup_screen.dart';
 import 'package:bank_pick/feature/on_boarding/on_boarding_screen.dart';
-import 'package:bank_pick/feature/settings/view/change_password_screen.dart';
 import 'package:bank_pick/feature/settings/view/personal_information_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,8 +33,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => NewCard());
       case Routes.topUp:
         return MaterialPageRoute(builder: (_) => TopupScreen());
-      case Routes.changePassword:
-        return MaterialPageRoute(builder: (_) => ChangePasswordScreen());
+  
       case Routes.personalInformation:
         return MaterialPageRoute(builder: (_) => PersonalInformationScreen());
       default:

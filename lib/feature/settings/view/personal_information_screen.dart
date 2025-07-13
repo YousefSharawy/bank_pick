@@ -2,6 +2,7 @@ import 'package:bank_pick/core/resources/assets_manager.dart';
 import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:bank_pick/core/resources/font_manager.dart';
 import 'package:bank_pick/core/utils/app_validator.dart';
+import 'package:bank_pick/core/utils/ui_utils.dart';
 import 'package:bank_pick/core/widgets/custome_text_field.dart';
 import 'package:bank_pick/feature/home/view_model/home_states.dart';
 import 'package:bank_pick/feature/home/view_model/home_view_model.dart';
@@ -36,17 +37,22 @@ class PersonalInformationScreen extends StatelessWidget {
                 settingsProvider.pickImage();
               },
               child: BlocBuilder<SettingsViewModel, SettingsState>(
-                builder: (context, state) {
-                  return CircleAvatar(
-                    foregroundImage:
-                        settingsProvider.image != null
-                            ? FileImage(settingsProvider.image!)
-                            : AssetImage(AssetsManager.avatar) as ImageProvider,
-                    minRadius: 60.r,
-                    backgroundColor: ColorManager.offWhite,
-                  );
-                },
-              ),
+                
+  builder: (context, state) {
+        final settingsProvider = context.read<SettingsViewModel>();
+
+    if(state is ImageLoading){
+      return UIUtils.showLoading(context);
+    }
+    return CircleAvatar(
+      foregroundImage: settingsProvider.imageUrl != null
+          ? NetworkImage(settingsProvider.imageUrl!)
+          : AssetImage(AssetsManager.avatar),
+      minRadius: 60.r,
+      backgroundColor: ColorManager.offWhite,
+    );
+  },
+),
             ),
             SizedBox(height: 16.h),
             Align(

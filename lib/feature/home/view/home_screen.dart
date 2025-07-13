@@ -8,6 +8,7 @@ import 'package:bank_pick/feature/cards/view_model/cards_view_model.dart';
 import 'package:bank_pick/feature/home/view/CustomHomeIconButton.dart';
 import 'package:bank_pick/feature/home/view_model/home_states.dart';
 import 'package:bank_pick/feature/home/view_model/home_view_model.dart';
+import 'package:bank_pick/feature/settings/view_model/settings_states.dart';
 import 'package:bank_pick/feature/settings/view_model/settings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,21 +46,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsetsDirectional.only(start: 10.w, end: 10.w),
                     child: Row(
                       children: [
-                        BlocBuilder<CardsViewModel, CardsStates>(
-                          builder: (context, state) {
-                            final settingsProvider =
-                                context.read<SettingsViewModel>();
-
-                            return CircleAvatar(
-                              foregroundImage:
-                                  settingsProvider.image != null
-                                      ? FileImage(settingsProvider.image!)
-                                      : AssetImage(AssetsManager.avatar),
-                              minRadius: 20.r,
-                              backgroundColor: ColorManager.offWhite,
-                            );
-                          },
-                        ),
+                        BlocBuilder<SettingsViewModel, SettingsState>(
+  builder: (context, state) {
+    final settingsProvider = context.read<SettingsViewModel>();
+    if (state is ImageLoading) {
+      return UIUtils.showLoading(context);
+    }
+    return CircleAvatar(
+      foregroundImage: settingsProvider.imageUrl != null
+          ? NetworkImage(settingsProvider.imageUrl!)
+          : AssetImage(AssetsManager.avatar),
+      minRadius: 30.r,
+      backgroundColor: ColorManager.offWhite,
+    );
+  },
+),
                         SizedBox(width: 16.w),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.025.h,
+                    height: MediaQuery.of(context).size.height * 0.02.h,
                   ),
                   Padding(
                     padding: EdgeInsetsDirectional.only(start: 10.w, end: 10.w),
@@ -101,12 +102,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           if (state is LoadingGetCards) {
                             return SizedBox.shrink();
                           }
+                          
                           return CardStack();
                         },
                       ),
                     ),
                   ),
-                  SizedBox(height: 35.h),
+                  SizedBox(height: 40.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -162,6 +164,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (state is LoadingGetTransaction) {
                           UIUtils.showLoading(context);
                         }
+                        if (alltrans.isEmpty) {
+                          return Center(
+                            child: Text(
+                              "No transactions found",
+                              style: TextStyle(
+                                fontSize: FontSizeManager.s16,
+                                color: ColorManager.gray,
+                              ),
+                            ),
+                          );
+                        }
+                        
 
                         return ListView.builder(
                           itemBuilder: (_, index) {

@@ -21,3 +21,13 @@ class ImageLoadedError extends SettingsState {
 
   ImageLoadedError(this.message);
 }
+
+class ResetPasswordSuccess extends SettingsState {}
+
+class ResetPasswordError extends SettingsState {
+  final String message;
+
+  ResetPasswordError(this.message);
+}
+
+class ResetPasswordLoading extends SettingsState {}

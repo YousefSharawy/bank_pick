@@ -2,6 +2,7 @@ import 'package:bank_pick/core/resources/assets_manager.dart';
 import 'package:bank_pick/core/resources/color_manager.dart';
 import 'package:bank_pick/core/resources/font_manager.dart';
 import 'package:bank_pick/core/routes/routes.dart';
+import 'package:bank_pick/core/utils/ui_utils.dart';
 import 'package:bank_pick/feature/cards/view_model/cards_states.dart';
 import 'package:bank_pick/feature/cards/view_model/cards_view_model.dart';
 import 'package:bank_pick/feature/home/view_model/home_states.dart';
@@ -55,19 +56,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SizedBox(height: 30.h),
             Row(
               children: [
-                BlocBuilder<SettingsViewModel, SettingsState>(
-                  builder: (context, state) {
-                    final settingsProvider = context.read<SettingsViewModel>();
-                    return CircleAvatar(
-                      foregroundImage:
-                          settingsProvider.image != null
-                              ? FileImage(settingsProvider.image!)
-                              : AssetImage(AssetsManager.avatar)as ImageProvider,
-                      minRadius: 30.r,
-                      backgroundColor: ColorManager.offWhite,
-                    );
-                  },
-                ),
+               BlocBuilder<SettingsViewModel, SettingsState>(
+  builder: (context, state) {
+    final settingsProvider = context.read<SettingsViewModel>();
+    return CircleAvatar(
+      foregroundImage: settingsProvider.imageUrl != null
+          ? NetworkImage(settingsProvider.imageUrl!)
+          : AssetImage(AssetsManager.avatar),
+      minRadius: 30.r,
+      backgroundColor: ColorManager.offWhite,
+    );
+  },
+),
                 SizedBox(width: 16.w),
                 BlocBuilder<HomeViewModel, HomeStates>(
                   builder: (_, state) {
@@ -114,38 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             Divider(color: ColorManager.offWhite, height: 10.h),
-            SizedBox(height: 22.h),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, Routes.changePassword);
-              },
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.lock_outline,
-                    size: 30.w,
-                    color: ColorManager.gray,
-                  ),
-                  SizedBox(width: 16.w),
 
-                  Text(
-                    "Change Password",
-                    style: TextStyle(
-                      fontSize: FontSizeManager.s14,
-                      color: ColorManager.navyBlue,
-                    ),
-                  ),
-                  Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 20.w,
-                    color: ColorManager.gray,
-                  ),
-                  SizedBox(width: 20.w), // Add padding from right edge
-                ],
-              ),
-            ),
-            Divider(color: ColorManager.offWhite, height: 10.h),
           ],
         ),
       ),

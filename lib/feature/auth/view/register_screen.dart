@@ -182,6 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       UIUtils.showLoading(context);
                     } else if (state is RegisterSuccess) {
                       UIUtils.hideLoading(context);
+                      UIUtils.showMessage("Confirmation email sent");
                       Navigator.of(context).pushReplacementNamed(Routes.login);
                     } else if (state is RegisterError) {
                       UIUtils.hideLoading(context);
