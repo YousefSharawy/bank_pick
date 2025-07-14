@@ -1,0 +1,446 @@
+import 'package:bank_pick/core/models/transaction_model.dart';
+import 'package:bank_pick/feature/cards/view_model/cards_states.dart';
+import 'package:bloc/bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/models/card_model.dart';
+
+class CardsViewModel extends Cubit<CardsStates> {
+  CardsViewModel() : super(InitCards()) {
+    getCredits();
+  }
+
+  double limit = 0;
+  int index = 0;
+  double spent = 0;
+  double currentUserBalance = 0;
+  double secondBalance = 0;
+  List<String> type = [];
+  RealtimeChannel? _channel;
+  
+  // Add null safety check for currentUser
+  String? get userId => Supabase.instance.client.auth.currentUser?.id;
+
+  List<CardModel> cards = [];
+  List<TransactionModel> allTransactions = [];
+  List<TransactionModel> currentCardTransactions = [];
+  String currentCreditCard = "";
+  
+  // Add null safety for card access
+  String getCardId(int index) {
+    if (index >= 0 && index < cards.length) {
+      return cards[index].cardNumber;
+    }
+    return "";
+  }
+  
+  int currentMonth = DateTime.now().month;
+  int currentYear = DateTime.now().year;
+  int lastActiveMonth = DateTime.now().month;
+  List<TransactionModel> specificTransactions = [];
+  
+  void updateSelectedMonth(int month) {
+    currentMonth = month;
+  }
+
+  void updateIndex(int newIndex) async {
+    if (newIndex >= 0 && newIndex < cards.length) {
+      index = newIndex;
+      currentCreditCard = cards[index].cardNumber;
+      await getTransactions();
+      await getValue();
+    }
+  }
+
+  Future setValue(double l) async {
+    try {
+      emit(SetLimitLoading());
+      
+      // Check if user is authenticated
+      if (userId == null) {
+        emit(SetLimitError("User not authenticated"));
+        return;
+      }
+      
+      if (currentMonth != lastActiveMonth) {
+        lastActiveMonth = currentMonth;
+        await Supabase.instance.client
+            .from('cards')
+            .update({"limit": 0})
+            .eq("card_number", currentCreditCard);
+        limit = 0;
+        emit(SetLimitSuccess());
+        return;
+      }
+
+      // Add bounds checking
+      if (index < 0 || index >= cards.length) {
+        emit(SetLimitError("Invalid card index"));
+        return;
+      }
+
+      final cardId = cards[index].cardNumber;
+      await Supabase.instance.client
+          .from('cards')
+          .update({"limit": l})
+          .eq("card_number", cardId);
+
+      limit = l;
+      emit(SetLimitSuccess());
+    } catch (e) {
+      emit(SetLimitError(e.toString()));
+    }
+  }
+
+  Future getValue() async {
+    try {
+      emit(GetLimitLoading());
+
+      // Add bounds checking
+      if (index < 0 || index >= cards.length) {
+        emit(GetLimitError("Invalid card index"));
+        return;
+      }
+
+      final cardId = cards[index].cardNumber;
+      final response = await Supabase.instance.client
+          .from("cards")
+          .select("limit")
+          .eq("card_number", cardId);
+
+      if (response.isNotEmpty && response[0] != null) {
+        final limitValue = response[0]["limit"];
+        limit = limitValue?.toDouble() ?? 0.0;
+        emit(GetLimitSuccess());
+      } else {
+        emit(GetLimitError("No limit data found"));
+      }
+    } catch (e) {
+      emit(GetLimitError(e.toString()));
+    }
+  }
+
+  Future<void> getCredits() async {
+    try {
+      emit(LoadingGetCards());
+      
+      // Check if user is authenticated
+      if (userId == null) {
+        emit(DislpalyGetCardsError("User not authenticated"));
+        return;
+      }
+      
+      final response = await Supabase.instance.client
+          .from('cards')
+          .select()
+          .eq('users_id', userId!)
+          .order('card_number', ascending: true);
+
+      cards.clear();
+      if (response.isNotEmpty) {
+        cards = response.map((e) => CardModel.fromJson(e)).toList();
+      }
+
+      await getTransactions();
+
+      emit(DisplayCardsSuccess());
+    } catch (error) {
+      emit(DislpalyGetCardsError(error.toString()));
+    }
+  }
+
+  Future<void> createCredit(
+    String cardNumber,
+    String expireDate,
+    String cardHolderName,
+    String cvvCode,
+  ) async {
+    try {
+      emit(LoadingCards());
+
+      // Check if user is authenticated
+      if (userId == null) {
+        emit(GetCardsError("User not authenticated"));
+        return;
+      }
+
+      await Supabase.instance.client.from('cards').insert({
+        "card_number": cardNumber,
+        "card_holder": cardHolderName,
+        "expire_date": expireDate,
+        "cvv": cvvCode,
+        "users_id": userId!,
+      });
+
+      await getCredits();
+      emit(GetCardsSuccess());
+    } catch (error) {
+      emit(GetCardsError(error.toString()));
+    }
+  }
+
+  Future<void> sendMoney(String credit, String amount) async {
+    try {
+      // Input validation
+      if (credit.isEmpty || amount.isEmpty) {
+        emit(SendMoneyError("Invalid input data"));
+        return;
+      }
+
+      // Check bounds
+      if (index < 0 || index >= cards.length) {
+        emit(SendMoneyError("Invalid card index"));
+        return;
+      }
+
+      final cardId = cards[index].cardNumber;
+      double transferAmount;
+      
+      try {
+        transferAmount = double.parse(amount);
+      } catch (e) {
+        emit(SendMoneyError("Invalid amount format"));
+        return;
+      }
+
+      if (cardId == credit) {
+        emit(SendMoneyError("Cannot send money to the same card"));
+        return;
+      }
+
+      emit(LoadingSendMoney());
+
+      final allCreditsResponse = await Supabase.instance.client
+          .from('cards')
+          .select()
+          .eq("card_number", credit);
+      if (allCreditsResponse.isEmpty) {
+        emit(SendMoneyError("This card doesn't exist"));
+        return;
+      }
+
+      final spentResponse = await Supabase.instance.client
+          .from("cards")
+          .select("spent, limit")
+          .eq("card_number", cardId);
+
+      if (spentResponse.isEmpty) {
+        emit(SendMoneyError("Card data not found"));
+        return;
+      }
+
+      final cardData = spentResponse.first;
+      double currentSpent = (cardData["spent"] as num?)?.toDouble() ?? 0.0;
+      double currentLimit = (cardData["limit"] as num?)?.toDouble() ?? 0.0;
+
+      // Check if transfer would exceed limit
+      double newSpent = currentSpent + transferAmount;
+      if (newSpent > currentLimit) {
+        emit(SendMoneyError("You have exceeded the limit"));
+        return;
+      }
+
+      await Supabase.instance.client
+          .from("cards")
+          .update({"spent": newSpent})
+          .eq("card_number", cardId);
+
+      final senderBalanceResponse = await Supabase.instance.client
+          .from("cards")
+          .select("balance")
+          .eq("card_number", cardId);
+
+      if (senderBalanceResponse.isEmpty) {
+        emit(SendMoneyError("Sender card balance not found"));
+        return;
+      }
+
+      double senderBalance =
+          (senderBalanceResponse.first["balance"] as num?)?.toDouble() ?? 0.0;
+
+      if (senderBalance < transferAmount) {
+        emit(SendMoneyError("Insufficient balance"));
+        return;
+      }
+      currentUserBalance = senderBalance;
+
+      double newSenderBalance = senderBalance - transferAmount;
+      await Supabase.instance.client
+          .from("cards")
+          .update({"balance": newSenderBalance})
+          .eq("card_number", cardId);
+
+      final recipientBalanceResponse = await Supabase.instance.client
+          .from("cards")
+          .select("balance")
+          .eq("card_number", credit);
+
+      if (recipientBalanceResponse.isEmpty) {
+        emit(SendMoneyError("Recipient card not found"));
+        return;
+      }
+
+      double recipientBalance =
+          (recipientBalanceResponse.first["balance"] as num?)?.toDouble() ?? 0.0;
+
+      double newRecipientBalance = recipientBalance + transferAmount;
+      await Supabase.instance.client
+          .from("cards")
+          .update({"balance": newRecipientBalance})
+          .eq("card_number", credit);
+
+      await createTransaction(cardId, transferAmount, credit);
+      await getTransactions();
+      emit(SendMoneySuccess());
+    } catch (e) {
+      emit(SendMoneyError(e.toString()));
+    }
+  }
+
+  Future createTransaction(
+    String senderCredit,
+    double amount,
+    String recieverCredit,
+  ) async {
+    try {
+      emit(LoadingTransactionCreation());
+      
+      // Check if user is authenticated
+      if (userId == null) {
+        emit(TreansactionCreateError("User not authenticated"));
+        return;
+      }
+
+      await Supabase.instance.client.from("transactions").insert({
+        "credit_number": senderCredit,
+        "user_id": userId!,
+        "amount": amount,
+        "f_type": "send money",
+      });
+
+      await Supabase.instance.client.from("transactions").insert({
+        "credit_number": recieverCredit,
+        "user_id": userId!,
+        "amount": amount,
+        "f_type": "receive money",
+      });
+      
+      await getTransactions();
+      emit(TreansactionCreateSuccess());
+    } catch (e) {
+      emit(TreansactionCreateError(e.toString()));
+    }
+  }
+
+  Future getTransactions() async {
+    try {
+      emit(LoadingGetTransaction());
+
+      if (cards.isEmpty) {
+        emit(TreansactionGetError("No cards found"));
+        return;
+      }
+
+      if (currentCreditCard.isEmpty) {
+        currentCreditCard = cards[0].cardNumber;
+        index = 0;
+      }
+
+      List<TransactionModel> tempTransactions = [];
+
+      final currentCardResponse = await Supabase.instance.client
+          .from('transactions')
+          .select()
+          .eq('credit_number', currentCreditCard)
+          .order('created_at', ascending: false);
+
+      if (currentCardResponse.isNotEmpty) {
+        tempTransactions.addAll(
+          currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+        );
+
+        currentCardTransactions.clear();
+        currentCardTransactions.addAll(
+          currentCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+        );
+      }
+
+      if (cards.length > 1) {
+        final secondCardNumber =
+            index == 0 ? cards[1].cardNumber : cards[0].cardNumber;
+
+        final secondCardResponse = await Supabase.instance.client
+            .from('transactions')
+            .select()
+            .eq('credit_number', secondCardNumber)
+            .order('created_at', ascending: false);
+
+        if (secondCardResponse.isNotEmpty) {
+          tempTransactions.addAll(
+            secondCardResponse.map((e) => TransactionModel.fromJson(e)).toList(),
+          );
+        }
+      }
+
+      tempTransactions.sort((a, b) => b.created_at.compareTo(a.created_at));
+
+      allTransactions.clear();
+      allTransactions.addAll(tempTransactions);
+
+      specificTransactions.clear();
+      specificTransactions =
+          allTransactions
+              .where(
+                (tx) =>
+                    tx.creditNumber == currentCreditCard &&
+                    tx.created_at.year == currentYear &&
+                    tx.created_at.month == currentMonth,
+              )
+              .toList();
+
+      emit(TreansactionGetSuccess());
+      _setupRealtimeSubscription();
+    } catch (e) {
+      emit(TreansactionGetError(e.toString()));
+    }
+  }
+
+  void _setupRealtimeSubscription() {
+    // Cancel existing subscription if any
+    _channel?.unsubscribe();
+
+    if (cards.isNotEmpty) {
+      _channel =
+          Supabase.instance.client
+              .channel('transactions_channel')
+              .onPostgresChanges(
+                event: PostgresChangeEvent.insert,
+                schema: 'public',
+                table: 'transactions',
+                callback: (payload) {
+                  try {
+                    final newRecord = payload.newRecord;
+                    if (newRecord != null) {
+                      final newTransaction = TransactionModel.fromJson(newRecord);
+                      final cardNumbers =
+                          cards.map((card) => card.cardNumber).toList();
+                      if (cardNumbers.contains(newTransaction.creditNumber)) {
+                        allTransactions.insert(0, newTransaction);
+                        emit(TreansactionGetSuccess());
+                      }
+                    }
+                  } catch (e) {
+                    print('Error handling new transaction: $e');
+                  }
+                },
+              )
+              .subscribe();
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _channel?.unsubscribe();
+    return super.close();
+  }
+}
